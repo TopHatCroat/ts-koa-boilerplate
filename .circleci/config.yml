@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.9
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dep-ver-{{ checksum "package.json" }}
+            - dep-ver-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: dep-ver-{{ checksum "package.json" }}
+
+      - run: yarn test
