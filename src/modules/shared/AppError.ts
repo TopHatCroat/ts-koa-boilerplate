@@ -6,3 +6,9 @@ export default class AppError extends Error {
         this.code = code;
     }
 }
+
+export class NotFoundError extends AppError {
+    constructor() {
+        super("Not found", 404);
+    }
+}

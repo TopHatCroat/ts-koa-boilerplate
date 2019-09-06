@@ -3,6 +3,9 @@ export interface IConfig {
     jwtSecret: string;
     adminEmail: string;
     adminPassword: string;
+    mongoLocation: string;
+    mongoPort: string;
+    mongoName: string;
 }
 
 function expectEnv(name: string): string {
@@ -19,6 +22,9 @@ const config: IConfig = {
     jwtSecret: expectEnv('JWT_SECRET'),
     adminEmail: expectEnv('ADMIN_EMAIL'),
     adminPassword: expectEnv('ADMIN_PASSWORD'),
+    mongoLocation: expectEnv('MONGO_LOCATION'),
+    mongoPort: expectEnv('MONGO_PORT'),
+    mongoName: expectEnv('MONGO_NAME'),
 };
 
 export { config };
