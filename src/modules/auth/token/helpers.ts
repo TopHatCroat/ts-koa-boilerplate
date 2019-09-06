@@ -1,13 +1,8 @@
-import { config } from "../../config";
-import Role from "./Role";
+import { config } from "../../../config";
+import Role from "../model/Role";
 import { parseJwtTokenPayload } from "./jwt";
-import { InvalidCredentialsError, InvalidCredentialsFormatError } from "./errors";
-
-export interface ICredentials {
-    email: string,
-    role: Role,
-    token: string,
-}
+import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../errors";
+import { ICredentials } from "../model/ICredentials";
 
 function isValidCredentials(email: string, password: string): boolean {
     if (email === config.adminEmail && password === config.adminPassword) {

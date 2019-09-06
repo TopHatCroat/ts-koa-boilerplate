@@ -1,12 +1,12 @@
 import Router from "koa-router";
 
-import { parseBasicAuth } from "./helpers";
-import { createJwtToken } from "./jwt";
+import { parseBasicAuth } from "./token/helpers";
+import { createJwtToken } from "./token/jwt";
 import { respondWithError } from "../shared/response";
 
 const router = new Router();
 
-router.post('/login',
+router.post("/login",
     async (ctx) => {
         const token = ctx.request.headers["authorization"] || "";
         await parseBasicAuth(token)

@@ -1,6 +1,6 @@
 import * as jsonwebtoken from "jsonwebtoken";
-import { config } from "../../config";
-import Role from "./Role";
+import { config } from "../../../config";
+import Role from "../model/Role";
 
 const USER_SUBJECT = "user";
 const APP_DOMAIN = "app.example.com";

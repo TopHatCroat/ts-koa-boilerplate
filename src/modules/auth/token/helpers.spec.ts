@@ -1,8 +1,8 @@
-import { config } from "../../config";
+import { config } from "../../../config";
 import { parseBasicAuth, parseBearerAuth } from "./helpers";
-import Role from "./Role";
-import {createJwtToken, parseJwtTokenPayload} from "./jwt";
-import {InvalidCredentialsError, InvalidCredentialsFormatError} from "./errors";
+import Role from "../model/Role";
+import { createJwtToken, parseJwtTokenPayload } from "./jwt";
+import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../errors";
 
 describe("Auth helpers", () => {
     describe("parseBasicAuth", () => {
