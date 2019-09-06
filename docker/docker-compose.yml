@@ -1,0 +1,30 @@
+version: "2"
+
+networks:
+  example_app:
+
+services:
+  mongo.example.app:
+    image: mongo:4.2.0
+    ports:
+      - "27017:27017"
+    networks:
+      - example_app
+
+  web.example.app:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+      args:
+        - NODE_VERSION=12.10.0
+        - YARN_VERSION=1.17.3
+    working_dir: /usr/app
+    command: yarn start
+    volumes:
+      - ../.:/usr/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo.example.app
+    networks:
+      - example_app
