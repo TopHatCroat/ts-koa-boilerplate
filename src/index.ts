@@ -1,3 +1,6 @@
+import * as Dotenv from "dotenv";
+Dotenv.config();
+
 import app from './app';
 import { config } from "./config";
 

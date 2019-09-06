@@ -16,5 +16,8 @@
   "testPathIgnorePatterns": [
     "./node_modules",
     "./dist"
+  ],
+  "setupFiles": [
+    "./fixtures/env.ts"
   ]
 }

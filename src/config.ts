@@ -1,7 +1,8 @@
-import * as Dotenv from "dotenv";
-
 export interface IConfig {
     port: number;
+    jwtSecret: string;
+    adminEmail: string;
+    adminPassword: string;
 }
 
 function expectEnv(name: string): string {
@@ -13,11 +14,11 @@ function expectEnv(name: string): string {
     return value!;
 }
 
-Dotenv.config();
-
-
-const config = {
-    port: expectEnv("PORT"),
+const config: IConfig = {
+    port: parseInt(expectEnv("PORT")),
+    jwtSecret: expectEnv('JWT_SECRET'),
+    adminEmail: expectEnv('ADMIN_EMAIL'),
+    adminPassword: expectEnv('ADMIN_PASSWORD'),
 };
 
 export { config };
