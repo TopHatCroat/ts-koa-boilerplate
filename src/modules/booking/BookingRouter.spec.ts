@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import request from "supertest";
+import supertest from "supertest";
+
 import app from "../../app";
 import { config } from "../../config";
-import EmailSender from "../../service/email";
-
+import EmailSender from "../../service/EmailSender";
 import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../auth/errors";
 import { createJwtToken } from "../auth/token/jwt";
 import Role from "../auth/model/Role";
-import IBooking from "./model/BookingModel";
-import bookingRepository from "./BookingRepository";
+import IBooking from "./model/IBooking";
+import BookingRepository from "./BookingRepository";
 import SpyInstance = jest.SpyInstance;
 
 // May require additional time for downloading MongoDB binaries
@@ -17,12 +17,15 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer: MongoMemoryServer;
 const validToken = `Bearer ${createJwtToken(config.adminEmail, Role.Admin)}`;
+const bookingRepository = new BookingRepository();
 
 beforeEach(async () => {
     mongoServer = new MongoMemoryServer();
     const mongoUri = await mongoServer.getConnectionString();
     await mongoose.connect(mongoUri, { useNewUrlParser: true }, (err) => {
-        if (err) console.error(err);
+        if (err) {
+            console.error(err);
+        }
     });
 });
 
@@ -33,7 +36,7 @@ afterEach(async () => {
 
 describe("Booking router", () => {
     it("Responds with unauthenticated if valid token not set", async () => {
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .get("/bookings");
 
         expect(response.status).toEqual(401);
@@ -41,7 +44,7 @@ describe("Booking router", () => {
     });
 
     it("Responds with unauthenticated if invalid token set", async () => {
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .get("/bookings")
             .set({ Authorization: "Bearer: invalid token"});
 
@@ -54,10 +57,10 @@ describe("Booking router", () => {
             email: "example@mail.com",
             firstName: "bob",
             lastName: "smith",
-            phoneNumber: "123123132"
+            phoneNumber: "123123132",
         });
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .get("/bookings")
             .set({ Authorization: validToken});
 
@@ -72,16 +75,16 @@ describe("Booking router", () => {
 
     it("Responds with booking when creating a new booking", async () => {
         jest.mock("../../service/email");
-        let emailSenderSpy: SpyInstance = jest.spyOn(EmailSender.prototype, 'sendInvitation');
+        const emailSenderSpy: SpyInstance = jest.spyOn(EmailSender.prototype, "sendInvitation");
 
         const booking: IBooking = {
             email: "example@mail.com",
             firstName: "bob",
             lastName: "smith",
-            phoneNumber: "123123132"
+            phoneNumber: "123123132",
         };
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .post("/booking")
             .send(booking);
 
@@ -100,10 +103,10 @@ describe("Booking router", () => {
             email: "example@mail.com",
             firstName: "bob",
             lastName: "smith",
-            phoneNumber: "123123132"
+            phoneNumber: "123123132",
         });
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .delete(`/booking/${booking.id}`)
             .set({ Authorization: validToken});
 
@@ -111,7 +114,7 @@ describe("Booking router", () => {
     });
 
     it("Responds with not found when deleting a non existent booking", async () => {
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .delete(`/booking/does_not_exist`)
             .set({ Authorization: validToken});
 
@@ -123,10 +126,10 @@ describe("Booking router", () => {
             email: "example@mail.com",
             firstName: "bob",
             lastName: "smith",
-            phoneNumber: "123123132"
+            phoneNumber: "123123132",
         });
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .delete(`/booking/${booking.id}`);
 
         expect(response.status).toEqual(401);

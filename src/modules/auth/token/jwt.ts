@@ -6,8 +6,8 @@ const USER_SUBJECT = "user";
 const APP_DOMAIN = "app.example.com";
 
 interface IPayload {
-    email: string,
-    role: Role
+    email: string;
+    role: Role;
 }
 
 export function parseJwtTokenPayload(token: string): IPayload {
@@ -30,6 +30,6 @@ export function createJwtToken(email: string, role: Role): string {
             expiresIn: "1 hour",
             subject: USER_SUBJECT,
             issuer: APP_DOMAIN,
-        }
+        },
     );
 }

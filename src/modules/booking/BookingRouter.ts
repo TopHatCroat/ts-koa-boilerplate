@@ -1,34 +1,34 @@
-import Router, { RouterContext } from "koa-router";
-import {body, middlewares, path, request, summary, tags} from "koa-swagger-decorator/dist";
+import { RouterContext } from "koa-router";
+import { body, middlewares, path, request, summary, tags } from "koa-swagger-decorator/dist";
 
-import { NotFoundError } from "../shared/appErrors";
-import { respondWithError } from "../shared/response";
+import EmailSender from "../../service/EmailSender";
+import { NotFoundError } from "../shared/appError";
+import { respondWithError } from "../shared/respondWithError";
 import authenticated from "../auth/middleware/authenticated";
 import adminOnly from "../auth/middleware/adminOnly";
 import BookingSchema from "./model/BookingSchema";
-import generateConfirmationCode from "./confirmationCode/generate";
-import IBooking from "./model/BookingModel"
-import bookingRepository from "./BookingRepository";
-import EmailSender from "../../service/email";
+import BookingRepository from "./BookingRepository";
+import IBooking from "./model/IBooking";
 
-const tag = tags(['booking']);
+const tag = tags(["booking"]);
 
 const bookingDescription = {
     email: { type: "string", required: true, example: "user@example.com" },
-    firstName: { type: 'string', required: true, example: "Bob" },
-    lastName: { type: 'string', required: true, example: "Smith" },
-    phoneNumber: { type: 'string', required: true, example: "+1555112233" },
+    firstName: { type: "string", required: true, example: "Bob" },
+    lastName: { type: "string", required: true, example: "Smith" },
+    phoneNumber: { type: "string", required: true, example: "+1555112233" },
 };
 
 const emailSender = new EmailSender();
+const bookingRepository = new BookingRepository();
 
-export default class BookingClass {
+export default class BookingRouter {
 
     @request("post", "/booking")
     @summary("Create new booking")
     @tag
     @body(bookingDescription)
-    static async post(ctx: RouterContext) {
+    public static async Create(ctx: RouterContext) {
         const booking = ctx.validatedBody as IBooking;
 
         const createdBooking = await bookingRepository.create(booking);
@@ -43,7 +43,7 @@ export default class BookingClass {
     @summary("Get all bookings")
     @tag
     @middlewares([authenticated, adminOnly])
-    static async getAll(ctx: RouterContext) {
+    public static async GetAll(ctx: RouterContext) {
         const bookings = await bookingRepository.findAll();
         ctx.status = 200;
         ctx.body = bookings;
@@ -54,15 +54,15 @@ export default class BookingClass {
     @tag
     @middlewares([authenticated, adminOnly])
     @path({
-        id: { type: 'string', required: true, description: 'Booking ID' },
+        id: { type: "string", required: true, description: "Booking ID" },
     })
-    static async delete(ctx: RouterContext) {
+    public static async Delete(ctx: RouterContext) {
         const { id } = ctx.validatedParams;
         const deleted = await bookingRepository.delete(id);
         if (deleted) {
             ctx.status = 200;
         } else {
-            respondWithError(ctx, new NotFoundError())
+            respondWithError(ctx, new NotFoundError());
         }
     }
 }

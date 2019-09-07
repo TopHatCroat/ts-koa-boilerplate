@@ -1,21 +1,14 @@
-import request from "supertest";
+import supertest from "supertest";
 import app from "../../app";
 import { config } from "../../config";
 import { InvalidCredentialsFormatError } from "./errors";
-
-const mockListen = jest.fn();
-app.listen = mockListen;
-
-afterEach(() => {
-    mockListen.mockReset();
-});
 
 describe("Auth router", () => {
     it("Responds with valid login token", async () => {
         const token = Buffer.from(`${config.adminEmail}:${config.adminPassword}`).toString("base64");
         const header = `Basic ${token}`;
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .post("/login")
             .set({ Authorization: header});
 
@@ -27,7 +20,7 @@ describe("Auth router", () => {
         const token = Buffer.from(`invalid credentials`).toString("base64");
         const header = `Basic ${token}`;
 
-        const response = await request(app.callback())
+        const response = await supertest(app.callback())
             .post("/login")
             .set({ Authorization: header});
 

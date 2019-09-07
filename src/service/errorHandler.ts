@@ -1,11 +1,11 @@
-import {RouterContext} from "koa-router";
+import { RouterContext } from "koa-router";
 
-export default function defaultErrorHandler() {
+export default function errorHandler() {
     return async (ctx: RouterContext, next: any) => {
         try {
             await next();
         } catch (err) {
-            if(err.name === "ValidationError") {
+            if (err.name === "ValidationError") {
                 ctx.status = 429;
             } else {
                 ctx.status = err.code || 500;

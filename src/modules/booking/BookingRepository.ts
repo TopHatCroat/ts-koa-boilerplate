@@ -1,8 +1,8 @@
 import { ObjectId } from "../../service/mongo";
+import { NotFoundError } from "../shared/appError";
 import BookingSchema, { SchemaType } from "./model/BookingSchema";
-import IBooking from "./model/BookingModel";
-import generateConfirmationCode from "./confirmationCode/generate";
-import {NotFoundError} from "../shared/appErrors";
+import generateValidationCode from "./confirmationCode/generateValidationCode";
+import IBooking from "./model/IBooking";
 
 function mapBooking(booking: SchemaType): IBooking {
     return {
@@ -13,12 +13,12 @@ function mapBooking(booking: SchemaType): IBooking {
         phoneNumber: booking.phoneNumber,
         confirmationCode: booking.confirmationCode,
         attendedAt: booking.attendedAt,
-    }
+    };
 }
 
 class BookingRepository {
 
-    async findAll(): Promise<IBooking[]> {
+    public async findAll(): Promise<IBooking[]> {
         const allBookings = await BookingSchema.find({}).lean();
 
         const result: IBooking[] = [];
@@ -29,23 +29,23 @@ class BookingRepository {
         return result;
     }
 
-    async create(booking: IBooking): Promise<IBooking> {
+    public async create(booking: IBooking): Promise<IBooking> {
         const docCount = await BookingSchema.countDocuments();
-        booking.confirmationCode = generateConfirmationCode(docCount);
+        booking.confirmationCode = generateValidationCode(docCount);
 
         const newDoc = new BookingSchema(booking);
         await newDoc.save();
         return mapBooking(newDoc);
     }
 
-    async delete(id: ObjectId): Promise<boolean> {
+    public async delete(id: ObjectId): Promise<boolean> {
         try {
             const res = await BookingSchema.deleteOne({ _id: id });
-            return res.ok == 1;
+            return res.ok === 1;
         } catch {
             return false;
         }
     }
 }
 
-export default new BookingRepository();
+export default BookingRepository;

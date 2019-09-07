@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa from "koa";
 import Router, { RouterContext } from "koa-router";
 import { middlewares, request, summary, tags, securityAll, responses } from "koa-swagger-decorator/dist";
 import authenticated from "../auth/middleware/authenticated";
@@ -11,7 +11,7 @@ export default class SystemRouter {
     @responses({
         201: { description: "System health is OK" },
     })
-    static async get(context: RouterContext) {
+    public static async Get(context: RouterContext) {
         context.status = 204;
     }
 }

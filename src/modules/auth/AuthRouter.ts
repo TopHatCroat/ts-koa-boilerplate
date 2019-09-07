@@ -9,7 +9,7 @@ const loginResponseDescription = {
     type: "object",
     properties: {
         token: { type: "string", description: "JWT to use for other endpoints" },
-    }
+    },
 };
 
 export default class AuthRouter {
@@ -21,15 +21,15 @@ export default class AuthRouter {
     @responses({
         201: { description: "Successful login", content: { "application/json": { schema: loginResponseDescription } } },
     })
-    static async login(ctx: RouterContext) {
-        const token = ctx.request.headers["authorization"] || "";
+    public static async Login(ctx: RouterContext) {
+        const token = ctx.request.headers.authorization || "";
         await parseBasicAuth(token)
             .then((creds) => createJwtToken(creds.email, creds.role))
-            .then((token) => {
+            .then((jwt) => {
                 ctx.status = 201;
                 ctx.body = {
-                    token,
-                }
+                    token: jwt,
+                };
             })
             .catch((e) => {
                 respondWithError(ctx, e);

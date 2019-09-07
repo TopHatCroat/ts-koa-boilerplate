@@ -12,21 +12,21 @@ export interface IConfig {
 
 function expectEnv(name: string): string {
     const value = process.env[name];
-    if(!value) {
-        throw new Error(`Missing required environmental variable: ${name}`)
+    if (!value) {
+        throw new Error(`Missing required environmental variable: ${name}`);
     }
 
     return value!;
 }
 
 const config: IConfig = {
-    port: parseInt(expectEnv("PORT")),
-    jwtSecret: expectEnv('JWT_SECRET'),
-    adminEmail: expectEnv('ADMIN_EMAIL'),
-    adminPassword: expectEnv('ADMIN_PASSWORD'),
-    mongoLocation: expectEnv('MONGO_LOCATION'),
-    mongoPort: expectEnv('MONGO_PORT'),
-    mongoName: expectEnv('MONGO_NAME'),
+    port: parseInt(expectEnv("PORT"), 10),
+    jwtSecret: expectEnv("JWT_SECRET"),
+    adminEmail: expectEnv("ADMIN_EMAIL"),
+    adminPassword: expectEnv("ADMIN_PASSWORD"),
+    mongoLocation: expectEnv("MONGO_LOCATION"),
+    mongoPort: expectEnv("MONGO_PORT"),
+    mongoName: expectEnv("MONGO_NAME"),
     sendGridKey: process.env.SENDGRID_API_KEY,
     emailFrom: process.env.EMAIL_FROM,
 };

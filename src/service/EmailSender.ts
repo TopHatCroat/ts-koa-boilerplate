@@ -6,13 +6,13 @@ function isEmailSenderConfigured() {
     return config.sendGridKey === undefined || config.emailFrom === undefined;
 }
 
-if(isEmailSenderConfigured()) {
+if (isEmailSenderConfigured()) {
     sgMail.setApiKey(config.sendGridKey);
 }
 
 export default class EmailSender {
     private async sendEmail(receiver: string | string[], subject: string, html: string) {
-        if(isEmailSenderConfigured()) {
+        if (isEmailSenderConfigured()) {
             return Promise.resolve();
         }
 
@@ -26,7 +26,7 @@ export default class EmailSender {
         await sgMail.sendMultiple(msg);
     }
 
-    async sendInvitation(receiver: string, confirmation: string) {
+    public async sendInvitation(receiver: string, confirmation: string) {
         const content = `<html>
                         <body>
                             <h1>You are special</h1>

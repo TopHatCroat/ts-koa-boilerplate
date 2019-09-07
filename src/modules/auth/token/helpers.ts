@@ -5,6 +5,7 @@ import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../error
 import { ICredentials } from "../model/ICredentials";
 
 function isValidCredentials(email: string, password: string): boolean {
+    // tslint:disable-next-line:possible-timing-attack
     if (email === config.adminEmail && password === config.adminPassword) {
         return true;
     }
@@ -17,7 +18,7 @@ export async function parseBasicAuth(token: string): Promise<ICredentials> {
         throw new InvalidCredentialsFormatError();
     }
 
-    let strippedToken = token.replace("Basic ", "");
+    const strippedToken = token.replace("Basic ", "");
     const b64decoded = Buffer.from(strippedToken, "base64").toString("ascii");
     const creds = b64decoded.split(":");
     if (creds.length !== 2) {
@@ -31,8 +32,8 @@ export async function parseBasicAuth(token: string): Promise<ICredentials> {
     return {
         email: creds[0],
         token: strippedToken,
-        role: Role.Admin
-    }
+        role: Role.Admin,
+    };
 }
 
 export async function parseBearerAuth(token: string): Promise<ICredentials> {
@@ -47,7 +48,7 @@ export async function parseBearerAuth(token: string): Promise<ICredentials> {
             email: payload.email,
             role: payload.role,
             token: strippedToken,
-        }
+        };
     } catch (e) {
         throw new InvalidCredentialsError();
     }

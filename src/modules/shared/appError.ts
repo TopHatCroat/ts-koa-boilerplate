@@ -1,4 +1,4 @@
-export default class AppErrors extends Error {
+export class AppError extends Error {
     public code: number;
 
     constructor(msg: string, code: number) {
@@ -7,7 +7,7 @@ export default class AppErrors extends Error {
     }
 }
 
-export class NotFoundError extends AppErrors {
+export class NotFoundError extends AppError {
     constructor() {
         super("Not found", 404);
     }

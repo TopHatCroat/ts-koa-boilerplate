@@ -2,10 +2,7 @@
   "defaultSeverity": "error",
   "extends": [
     "tslint:recommended",
-    "tslint-microsoft-contrib/latest",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript"
+    "tslint-microsoft-contrib/latest"
   ],
   "rulesDirectory": [
     "node_modules/tslint-microsoft-contrib"
@@ -39,18 +36,32 @@
     "no-bitwise": false,
     "interface-over-type-literal": false,
     "no-consecutive-blank-lines": true,
-    "no-relative-imports": true,
+    "no-relative-imports": false,
     "max-func-body-length": [
       true,
       {
-        "func-body-length": 25,
+        "func-body-length": 75,
         "func-expression-body-length": 5,
-        "arrow-body-length": 10,
-        "method-body-length": 25,
-        "ctor-body-length": 25
+        "arrow-body-length": 50,
+        "method-body-length": 75,
+        "ctor-body-length": 10,
+        "ignore-parameters-to-function-regex": "^describe$"
       }
     ],
     "no-typeof-undefined": true,
-    "use-named-parameter": true
+    "use-named-parameter": true,
+    "prefer-type-cast": false,
+    "no-backbone-get-set-outside-model": false,
+    "mocha-no-side-effect-code": false,
+    "function-name": [
+      true,
+      {
+        "method-regex":"^[a-z][\\w\\d]+$",
+        "private-method-regex":"^[a-z][\\w\\d]+$",
+        "protected-method-regex": "^[a-z][\\w\\d]+$",
+        "static-method-regex": "^[A-Z][\\w\\d]+$",
+        "function-regex": "^[a-z][\\w\\d]+$"
+      }
+    ]
   }
 }

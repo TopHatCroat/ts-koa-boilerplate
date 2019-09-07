@@ -52,11 +52,10 @@ describe("Auth helpers", () => {
             expect(creds.role).toEqual(role);
         });
 
-
         it("Throws with empty token", async () => {
             const header = "";
 
             await expect(parseBearerAuth(header)).rejects.toEqual(new InvalidCredentialsFormatError());
         });
-    })
+    });
 });

@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import IBooking from "./BookingModel";
+import IBooking from "./IBooking";
 
 type SchemaType = IBooking & mongoose.Document;
 
@@ -15,4 +15,4 @@ const schema = new mongoose.Schema({
 const model = mongoose.model<SchemaType>("Booking", schema);
 
 export { SchemaType };
-export default model;
+export default BookingSchema;
