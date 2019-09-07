@@ -17,7 +17,7 @@ describe("Auth router", () => {
 
         const response = await request(app.callback())
             .post("/login")
-            .set({ Authorization:  header});
+            .set({ Authorization: header});
 
         expect(response.status).toEqual(201);
         expect(response.body.token).toMatch(/.*\..*\..*/);
@@ -29,7 +29,7 @@ describe("Auth router", () => {
 
         const response = await request(app.callback())
             .post("/login")
-            .set({ Authorization:  header});
+            .set({ Authorization: header});
 
         expect(response.status).toEqual(401);
         expect(response.body.message).toEqual((new InvalidCredentialsFormatError()).message);

@@ -1,13 +1,27 @@
-import Router from "koa-router";
+import { RouterContext } from "koa-router";
+import {params, request, responses, security, summary, tags} from "koa-swagger-decorator/dist";
 
 import { parseBasicAuth } from "./token/helpers";
 import { createJwtToken } from "./token/jwt";
 import { respondWithError } from "../shared/response";
 
-const router = new Router();
+const loginResponseDescription = {
+    type: "object",
+    properties: {
+        token: { type: "string", description: "JWT to use for other endpoints" },
+    }
+};
 
-router.post("/login",
-    async (ctx) => {
+export default class AuthRouter {
+
+    @request("post", "/login")
+    @security([{ BasicAuth: [] }])
+    @summary("Used to acquire authorization token")
+    @tags(["auth"])
+    @responses({
+        201: { description: "Successful login", content: { "application/json": { schema: loginResponseDescription } } },
+    })
+    static async login(ctx: RouterContext) {
         const token = ctx.request.headers["authorization"] || "";
         await parseBasicAuth(token)
             .then((creds) => createJwtToken(creds.email, creds.role))
@@ -21,6 +35,4 @@ router.post("/login",
                 respondWithError(ctx, e);
             });
     }
-);
-
-export default router;
+}

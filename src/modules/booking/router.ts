@@ -1,73 +1,63 @@
-import Router from "koa-router";
+import Router, { RouterContext } from "koa-router";
+import {body, middlewares, path, request, summary, tags} from "koa-swagger-decorator/dist";
 
+import { NotFoundError } from "../shared/appErrors";
 import { respondWithError } from "../shared/response";
-import { regexValidated } from "../shared/validation";
 import authenticated from "../auth/middleware/authenticated";
 import adminOnly from "../auth/middleware/adminOnly";
 import BookingSchema from "./model/BookingSchema";
 import generateConfirmationCode from "./confirmationCode/generate";
-import { NotFoundError } from "../shared/appErrors";
 import IBooking from "./model/BookingModel"
+import bookingRepository from "./BookingRepository";
 
-const router = new Router();
+const tag = tags(['booking']);
 
-router.post('/booking',
-    async (ctx) => {
-        const data = ctx.request.body;
+const bookingDescription = {
+    email: { type: "string", required: true, example: "user@example.com" },
+    firstName: { type: 'string', required: true, example: "Bob" },
+    lastName: { type: 'string', required: true, example: "Smith" },
+    phoneNumber: { type: 'string', required: true, example: "+1555112233" },
+};
 
-        const booking: IBooking = {
-            email: regexValidated(data.email, /.*@.*/, "Invalid email"),
-            firstName: regexValidated(data.firstName, /.+/, "Must provide first name"),
-            lastName: regexValidated(data.firstName, /.+/, "Must provide first name"),
-            phoneNumber: regexValidated(data.firstName, /.+/, "Must provide first name"),
-        };
+export default class BookingClass {
 
-        const docCount = await BookingSchema.countDocuments();
-        booking.confirmationCode = generateConfirmationCode(docCount);
+    @request("post", "/booking")
+    @summary("Create new booking")
+    @tag
+    @body(bookingDescription)
+    static async post(ctx: RouterContext) {
+        const booking = ctx.validatedBody as IBooking;
 
-        const newDoc = new BookingSchema(booking);
-        await newDoc.save();
+        const createdBooking = await bookingRepository.create(booking);
 
         ctx.status = 201;
-        ctx.body = booking;
+        ctx.body = createdBooking;
     }
-);
 
-router.get('/booking',
-    authenticated,
-    adminOnly,
-    async (ctx) => {
-        const allBookings = await BookingSchema.find({}).lean();
-
-        const response: IBooking[] = [];
-        for (const booking of allBookings) {
-            response.push({
-                id: booking._id,
-                email: booking.email,
-                firstName: booking.firstName,
-                lastName: booking.lastName,
-                phoneNumber: booking.phoneNumber,
-                confirmationCode: booking.confirmationCode,
-                attendedAt: booking.attendedAt,
-            });
-        }
-
+    @request("get", "/bookings")
+    @summary("Get all bookings")
+    @tag
+    @middlewares([authenticated, adminOnly])
+    static async getAll(ctx: RouterContext) {
+        const bookings = await bookingRepository.findAll();
         ctx.status = 200;
-        ctx.body = response;
+        ctx.body = bookings;
     }
-);
 
-router.delete('/booking/:id',
-    authenticated,
-    adminOnly,
-    async (ctx) => {
-        const deletedCount = await BookingSchema.deleteOne({ _id: ctx.params.id });
-        if (deletedCount) {
+    @request("delete", "/booking/{id}")
+    @summary("Delete a booking")
+    @tag
+    @middlewares([authenticated, adminOnly])
+    @path({
+        id: { type: 'string', required: true, description: 'Booking ID' },
+    })
+    static async delete(ctx: RouterContext) {
+        const { id } = ctx.validatedParams;
+        const deleted = await bookingRepository.delete(id);
+        if (deleted) {
             ctx.status = 200;
         } else {
             respondWithError(ctx, new NotFoundError())
         }
     }
-);
-
-export default router;
+}

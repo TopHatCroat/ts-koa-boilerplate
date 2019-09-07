@@ -13,4 +13,6 @@ const schema = new mongoose.Schema({
 });
 
 const model = mongoose.model<SchemaType>("Booking", schema);
+
+export { SchemaType };
 export default model;
