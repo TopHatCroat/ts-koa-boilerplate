@@ -1,23 +1,21 @@
 import mongoose from "mongoose";
-import  {MongoMemoryServer } from "mongodb-memory-server";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
-
 import app from "../../app";
 import { config } from "../../config";
+import EmailSender from "../../service/email";
+
 import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../auth/errors";
 import { createJwtToken } from "../auth/token/jwt";
 import Role from "../auth/model/Role";
 import IBooking from "./model/BookingModel";
 import bookingRepository from "./BookingRepository";
+import SpyInstance = jest.SpyInstance;
 
 // May require additional time for downloading MongoDB binaries
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer: MongoMemoryServer;
-
-const mockListen = jest.fn();
-app.listen = mockListen;
-
 const validToken = `Bearer ${createJwtToken(config.adminEmail, Role.Admin)}`;
 
 beforeEach(async () => {
@@ -29,7 +27,6 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-    mockListen.mockReset();
     await mongoose.disconnect();
     await mongoServer.stop();
 });
@@ -74,6 +71,9 @@ describe("Booking router", () => {
     });
 
     it("Responds with booking when creating a new booking", async () => {
+        jest.mock("../../service/email");
+        let emailSenderSpy: SpyInstance = jest.spyOn(EmailSender.prototype, 'sendInvitation');
+
         const booking: IBooking = {
             email: "example@mail.com",
             firstName: "bob",
@@ -91,6 +91,8 @@ describe("Booking router", () => {
         expect(response.body.lastName).toEqual(booking.lastName);
         expect(response.body.phoneNumber).toEqual(booking.phoneNumber);
         expect(response.body.confirmationCode).toMatch(/\w{8}/);
+
+        expect(emailSenderSpy).toHaveBeenCalledWith(response.body.email, response.body.confirmationCode);
     });
 
     it("Responds with ok when deleting a booking", async () => {

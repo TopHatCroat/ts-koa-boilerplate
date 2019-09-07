@@ -9,6 +9,7 @@ import BookingSchema from "./model/BookingSchema";
 import generateConfirmationCode from "./confirmationCode/generate";
 import IBooking from "./model/BookingModel"
 import bookingRepository from "./BookingRepository";
+import EmailSender from "../../service/email";
 
 const tag = tags(['booking']);
 
@@ -18,6 +19,8 @@ const bookingDescription = {
     lastName: { type: 'string', required: true, example: "Smith" },
     phoneNumber: { type: 'string', required: true, example: "+1555112233" },
 };
+
+const emailSender = new EmailSender();
 
 export default class BookingClass {
 
@@ -29,6 +32,8 @@ export default class BookingClass {
         const booking = ctx.validatedBody as IBooking;
 
         const createdBooking = await bookingRepository.create(booking);
+
+        await emailSender.sendInvitation(createdBooking.email, createdBooking.confirmationCode!!);
 
         ctx.status = 201;
         ctx.body = createdBooking;

@@ -6,6 +6,8 @@ export interface IConfig {
     mongoLocation: string;
     mongoPort: string;
     mongoName: string;
+    sendGridKey?: string;
+    emailFrom?: string;
 }
 
 function expectEnv(name: string): string {
@@ -25,6 +27,8 @@ const config: IConfig = {
     mongoLocation: expectEnv('MONGO_LOCATION'),
     mongoPort: expectEnv('MONGO_PORT'),
     mongoName: expectEnv('MONGO_NAME'),
+    sendGridKey: process.env.SENDGRID_API_KEY,
+    emailFrom: process.env.EMAIL_FROM,
 };
 
 export { config };
