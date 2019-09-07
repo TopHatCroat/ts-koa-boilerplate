@@ -7,7 +7,7 @@ import { InvalidCredentialsError, InvalidCredentialsFormatError } from "../error
 describe("Auth helpers", () => {
     describe("parseBasicAuth", () => {
         it("Returns valid credentials", async () => {
-            const token = (new Buffer(`${config.adminEmail}:${config.adminPassword}`)).toString("base64");
+            const token = Buffer.from(`${config.adminEmail}:${config.adminPassword}`).toString("base64");
             const header = `Basic ${token}`;
 
             const creds = await parseBasicAuth(header);
@@ -18,14 +18,14 @@ describe("Auth helpers", () => {
         });
 
         it("Throws with invalid credentials", async () => {
-            const token = (new Buffer(`${config.adminEmail}:not the password`)).toString("base64");
+            const token = Buffer.from(`${config.adminEmail}:not the password`).toString("base64");
             const header = `Basic ${token}`;
 
             await expect(parseBasicAuth(header)).rejects.toEqual(new InvalidCredentialsError());
         });
 
         it("Throws with invalid token format", async () => {
-            const token = (new Buffer(`invalid payload format`)).toString("base64");
+            const token = Buffer.from(`invalid payload format`).toString("base64");
             const header = `Basic ${token}`;
 
             await expect(parseBasicAuth(header)).rejects.toEqual(new InvalidCredentialsFormatError());

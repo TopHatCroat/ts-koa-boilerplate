@@ -19,5 +19,6 @@
   ],
   "setupFiles": [
     "./fixtures/env.ts"
-  ]
+  ],
+  "testEnvironment": "node"
 }

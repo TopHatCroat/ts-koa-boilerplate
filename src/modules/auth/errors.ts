@@ -1,18 +1,18 @@
-import AppError from "../shared/AppError";
+import AppErrors from "../shared/appErrors";
 
-export class UnauthorizedError extends AppError {
+export class UnauthorizedError extends AppErrors {
     constructor() {
         super("Not found", 404);
     }
 }
 
-export class InvalidCredentialsError extends AppError {
+export class InvalidCredentialsError extends AppErrors {
     constructor() {
         super("Invalid credentials", 401);
     }
 }
 
-export class InvalidCredentialsFormatError extends AppError {
+export class InvalidCredentialsFormatError extends AppErrors {
     constructor() {
         super("Invalid credentials format", 401);
     }

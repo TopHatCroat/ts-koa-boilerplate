@@ -1,7 +1,7 @@
 import { ObjectId } from "../../../service/mongo";
 
 export default interface IBooking {
-    _id?: ObjectId;
+    id?: ObjectId;
     email: string;
     firstName: string;
     lastName: string;

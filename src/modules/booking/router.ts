@@ -6,7 +6,7 @@ import authenticated from "../auth/middleware/authenticated";
 import adminOnly from "../auth/middleware/adminOnly";
 import BookingSchema from "./model/BookingSchema";
 import generateConfirmationCode from "./confirmationCode/generate";
-import { NotFoundError } from "../shared/AppError";
+import { NotFoundError } from "../shared/appErrors";
 import IBooking from "./model/BookingModel"
 
 const router = new Router();
@@ -22,7 +22,7 @@ router.post('/booking',
             phoneNumber: regexValidated(data.firstName, /.+/, "Must provide first name"),
         };
 
-        const docCount = await BookingSchema.count({});
+        const docCount = await BookingSchema.countDocuments();
         booking.confirmationCode = generateConfirmationCode(docCount);
 
         const newDoc = new BookingSchema(booking);
@@ -41,7 +41,15 @@ router.get('/booking',
 
         const response: IBooking[] = [];
         for (const booking of allBookings) {
-            response.push(booking as IBooking);
+            response.push({
+                id: booking._id,
+                email: booking.email,
+                firstName: booking.firstName,
+                lastName: booking.lastName,
+                phoneNumber: booking.phoneNumber,
+                confirmationCode: booking.confirmationCode,
+                attendedAt: booking.attendedAt,
+            });
         }
 
         ctx.status = 200;
