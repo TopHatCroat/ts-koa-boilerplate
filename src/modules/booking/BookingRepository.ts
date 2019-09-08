@@ -1,5 +1,5 @@
 import { ObjectId } from "../../service/mongo";
-import { NotFoundError } from "../shared/appError";
+import { AlreadyExists, NotFoundError } from "../shared/appError";
 import BookingSchema, { SchemaType } from "./model/BookingSchema";
 import generateValidationCode from "./confirmationCode/generateValidationCode";
 import IBooking from "./model/IBooking";
@@ -30,6 +30,10 @@ class BookingRepository {
     }
 
     public async create(booking: IBooking): Promise<IBooking> {
+        if (await BookingSchema.exists({ email: booking.email })) {
+            throw new AlreadyExists("Email already in use");
+        }
+
         const docCount = await BookingSchema.countDocuments();
         booking.confirmationCode = generateValidationCode(docCount);
 

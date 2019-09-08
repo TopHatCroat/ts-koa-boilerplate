@@ -12,7 +12,7 @@ const schema = new mongoose.Schema({
     attendedAt: { type: Date },
 });
 
-const model = mongoose.model<SchemaType>("Booking", schema);
+const BookingSchema = mongoose.model<SchemaType>("Booking", schema);
 
 export { SchemaType };
 export default BookingSchema;

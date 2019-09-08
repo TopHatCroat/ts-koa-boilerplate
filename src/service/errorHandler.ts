@@ -7,8 +7,10 @@ export default function errorHandler() {
         } catch (err) {
             if (err.name === "ValidationError") {
                 ctx.status = 429;
-            } else {
+            } else if (err.name === "AppError")  {
                 ctx.status = err.code || 500;
+            } else {
+                ctx.status = 500;
             }
             ctx.body = {
                 message: err.message,

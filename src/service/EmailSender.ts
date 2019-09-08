@@ -3,7 +3,7 @@ const sgMail = require("@sendgrid/mail");
 import { config } from "../config";
 
 function isEmailSenderConfigured() {
-    return config.sendGridKey === undefined || config.emailFrom === undefined;
+    return config.sendGridKey && config.emailFrom;
 }
 
 if (isEmailSenderConfigured()) {
@@ -12,7 +12,7 @@ if (isEmailSenderConfigured()) {
 
 export default class EmailSender {
     private async sendEmail(receiver: string | string[], subject: string, html: string) {
-        if (isEmailSenderConfigured()) {
+        if (!isEmailSenderConfigured()) {
             return Promise.resolve();
         }
 

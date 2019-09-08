@@ -74,7 +74,7 @@ describe("Booking router", () => {
     });
 
     it("Responds with booking when creating a new booking", async () => {
-        jest.mock("../../service/email");
+        jest.mock("../../service/EmailSender");
         const emailSenderSpy: SpyInstance = jest.spyOn(EmailSender.prototype, "sendInvitation");
 
         const booking: IBooking = {
@@ -110,7 +110,7 @@ describe("Booking router", () => {
             .delete(`/booking/${booking.id}`)
             .set({ Authorization: validToken});
 
-        expect(response.status).toEqual(200);
+        expect(response.status).toEqual(204);
     });
 
     it("Responds with not found when deleting a non existent booking", async () => {

@@ -3,7 +3,7 @@ import {params, request, responses, security, summary, tags} from "koa-swagger-d
 
 import { parseBasicAuth } from "./token/helpers";
 import { createJwtToken } from "./token/jwt";
-import { respondWithError } from "../shared/response";
+import { respondWithError } from "../shared/respondWithError";
 
 const loginResponseDescription = {
     type: "object",

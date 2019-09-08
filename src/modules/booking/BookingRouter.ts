@@ -1,12 +1,11 @@
 import { RouterContext } from "koa-router";
-import { body, middlewares, path, request, summary, tags } from "koa-swagger-decorator/dist";
+import {body, middlewares, path, request, security, summary, tags} from "koa-swagger-decorator/dist";
 
 import EmailSender from "../../service/EmailSender";
 import { NotFoundError } from "../shared/appError";
 import { respondWithError } from "../shared/respondWithError";
 import authenticated from "../auth/middleware/authenticated";
 import adminOnly from "../auth/middleware/adminOnly";
-import BookingSchema from "./model/BookingSchema";
 import BookingRepository from "./BookingRepository";
 import IBooking from "./model/IBooking";
 
@@ -42,6 +41,7 @@ export default class BookingRouter {
     @request("get", "/bookings")
     @summary("Get all bookings")
     @tag
+    @security([{ BearerAuth: [] }])
     @middlewares([authenticated, adminOnly])
     public static async GetAll(ctx: RouterContext) {
         const bookings = await bookingRepository.findAll();
@@ -52,6 +52,7 @@ export default class BookingRouter {
     @request("delete", "/booking/{id}")
     @summary("Delete a booking")
     @tag
+    @security([{ BearerAuth: [] }])
     @middlewares([authenticated, adminOnly])
     @path({
         id: { type: "string", required: true, description: "Booking ID" },
@@ -60,7 +61,7 @@ export default class BookingRouter {
         const { id } = ctx.validatedParams;
         const deleted = await bookingRepository.delete(id);
         if (deleted) {
-            ctx.status = 200;
+            ctx.status = 204;
         } else {
             respondWithError(ctx, new NotFoundError());
         }
