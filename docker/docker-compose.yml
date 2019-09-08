@@ -13,15 +13,21 @@ services:
 
   web.example.app:
     build:
-      dockerfile: Dockerfile
-      context: ./
+      dockerfile: ./docker/Dockerfile
+      context: ..
       args:
         - NODE_VERSION=12.10.0
         - YARN_VERSION=1.17.3
-    working_dir: /usr/app
-    command: yarn start
-    volumes:
-      - ../.:/usr/app
+    environment:
+      - PORT=3000
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=password
+      - JWT_SECRET=jwt-secret
+      - MONGO_LOCATION=mongo.example.app
+      - MONGO_PORT=27017
+      - MONGO_NAME=example
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - EMAIL_FROM=${EMAIL_FROM}
     ports:
       - "3000:3000"
     depends_on:

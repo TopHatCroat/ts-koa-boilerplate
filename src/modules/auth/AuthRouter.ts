@@ -19,7 +19,7 @@ export default class AuthRouter {
     @summary("Used to acquire authorization token")
     @tags(["auth"])
     @responses({
-        201: { description: "Successful login", content: { "application/json": { schema: loginResponseDescription } } },
+        201: { description: "Successful login", schema: loginResponseDescription },
     })
     public static async Login(ctx: RouterContext) {
         const token = ctx.request.headers.authorization || "";

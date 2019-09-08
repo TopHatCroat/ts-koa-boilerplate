@@ -30,7 +30,7 @@ router.swagger({
         },
     },
 });
-router.mapDir(path.join(__dirname, "modules"), { ignore: ["**/?(*.)spec.ts"] });
+router.mapDir(path.join(__dirname, "modules"), { ignore: ["**/?(*.)spec.(ts|js)"] });
 
 const app = new Koa();
 app.use(errorHandler())

@@ -20,4 +20,5 @@ jobs:
             - node_modules
           key: dep-ver-{{ checksum "package.json" }}
 
+      - run: yarn lint
       - run: yarn test
